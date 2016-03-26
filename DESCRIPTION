@@ -1,0 +1,13 @@
+Package: CCELIM
+Type: Package
+Title: California Current Ecosystem Linear Inverse Model
+Version: 0.1.8
+Date: 2016-02-29
+Author: Thomas Bryce Kelly 
+Maintainer: <tom@tkelly.org>
+Description: More about what it does (maybe more than one line)
+License: GPL
+Imports: XLConnect, Matrix, MASS, ggplot2, Hmisc, colorspace, RColorBrewer, limSolve, digest,diagram, lattice
+Suggests: knitr,
+    testthat
+VignetteBuilder: knitr
