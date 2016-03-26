@@ -12,18 +12,35 @@ vignette: >
 # Linear Inverse Modeling: an Introduction
 
 A LIM is constructed as a set of linear relationships between the various members of the ecosystem and attempts to model the flows between any two of these members. The equations constrain the magnitude of each flow through the ecosystem. These linear relationships are codified into three separate matrix equations: one describes the precise equality relationships
+
 $A⋅x = b$ (1)
+
 one describes equality relationships known with some confidence
-$E⋅x = f$ (2)
+
+$E⋅x = f$ (2a)
+
+$E\cdot\sigma_x = \sigma_f$ (2b)
+
 and one describes inequality relationships
+
 $G⋅x ≥ h$ (3)
+
+Due to the nature of most natural systems of interest to modellers, the number of flows is generally much larger than the number of equations constraining them. In order words the $dim(\vec{x}) > dim(\vec{b})+dim(\vec{f})+dim(\vec{h})$. Even if this is not strictly true, the presence of inequalities adds additional degrees of freedom.
+
+Therefore LIM-problems are generally underconstrained with many degrees of freedom possible. The selection of a solution from the high-dimensional space of possible solutions perscribed by the underconstrained system of equations is an important step in the model pipeline. Early models faced the high-diensionality of the solution space with an analytical selection metric, namely the L$_2$-minimum norm.
+
+The L2 minimum norm selects a single solution from the high-dimensional solution space based on the minimization of the sum of the flows through the system. While parsiminous, this selection criteria has been found to less than ideal in many cases for it push the inequality equations to their extremes (Stukel 2011). The strength of this selection metric is the speed at which the solution can be computed. Even for very large models with many degrees of freedom, this analytical selction criterion can be applied and a solution found within a few seconds on any modern computer. This efficiency allows the model to be run numerous times and to be expanded to encompass more flows than would be possible otherwise. The l2-minium norm cannot handle equation 2 values naturally and instead appends them to eq 1 so that the model is required to perfectly satisfy those observations.
+
+The selection algorithm used in this model is not the L2 minimum norm and is instead a Markov Chain Monte Carlo (MCMC) technique. This method initally starts by calculating the l2-minimum norm, and then proceeds to stochastically search the solution space with a random walk and weighted by deviation of the model from the observed values of equation 2.
 
 ## Ecosystems
 
 For CCELIM, the flows, x⃗, are in units of mg C per day per m2. 
+
 Eq. 1 ensures mass-balance to and from each ecosystem member since carbon is an exactly conserved quantity within the ecosystem. The linear relations of Eq. 2 contain data taken from both the field and laboratory. These include measured respiration rates, grazing rates, fecal pellet flux, mortality rates, vertical migration and estimates of carbon fixation. Since all of these flows are known with some confidence interval (SD), the model is permitted to deviate from these equalities. The degree to which the model over (under) estimates these values is based on a probabilistic formula and weighted by the measurement’s standard deviation (SD). 
 
 The inequalities of Eq. 3 constrain the model based on accepted physiological relations, which include respiration rates based on ingestion rate and biomass measurements, excretion based on grazing rates, assimilation efficiencies and gross growth efficiencies (GGE). 
+
 Eq. 1 and 3 together constitute an underdetermined system whereby an infinite number of valid x solutions exist. Using a Markov Chain Monte Carlo method, this solution space can be statistical interrogated while integrating the soft constraints of Eq. 2. Since the selection criterion for accepting new solution is a Markov Chain implementation, each new solution is based off the previous solution. The Monte Carlo acceptance model for the CCELIM is
 
 $P(accepting) = e-0.5(SSR_new-SSR_old)$ (4)
